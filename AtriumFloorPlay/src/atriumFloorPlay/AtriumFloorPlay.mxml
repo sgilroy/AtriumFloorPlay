@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+	   implements="mx.managers.IFocusManagerComponent"
+	   creationComplete="creationCompleteHandler(event)"
+	   addedToStage="addedToStageHandler(event)"
+	   backgroundColor="0x000000"
+	   showStatusBar="false"
+	   width="800"
+	   height="600"
+		>
+    <fx:Script><![CDATA[
+		import mx.controls.Alert;
+		import mx.events.FlexEvent;
+
+		import org.tuio.TuioClient;
+		import org.tuio.TuioManager;
+		import org.tuio.adapters.MouseTuioAdapter;
+		import org.tuio.connectors.UDPConnector;
+
+		import org.tuio.debug.TuioDebug;
+
+		private function creationCompleteHandler(event:FlexEvent):void
+		{
+		}
+
+		private var _blobVisualizer:BlobVisualizer;
+		private var _cursorTracker:CursorTracker;
+
+		private function initializeBlobVisualizer():void
+		{
+			_blobVisualizer = new BlobVisualizer(stage);
+		}
+
+		private function addedToStageHandler(event:Event):void
+		{
+			initializeWindowMover();
+//			initializeBlobVisualizer();
+			initializeCursorTracker();
+		}
+
+		private function initializeCursorTracker():void
+		{
+			_cursorTracker = new CursorTracker(stage, _physicsPlayground);
+		}
+
+		private function initializeWindowMover():void
+		{
+			var windowMover:WindowMover = new WindowMover(this);
+		}
+
+		private var _physicsPlayground:PhysicsPlayground = new PhysicsPlayground();
+
+		override protected function createChildren():void
+		{
+			super.createChildren();
+			_physicsPlayground.percentWidth = 100;
+			_physicsPlayground.percentHeight = 100;
+			this.addElement(_physicsPlayground);
+		}
+		]]></fx:Script>
+</s:WindowedApplication>
