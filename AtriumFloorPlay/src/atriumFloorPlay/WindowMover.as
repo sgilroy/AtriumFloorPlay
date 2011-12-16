@@ -59,31 +59,61 @@ package atriumFloorPlay
 				var displayStateChange:Boolean;
 				if (screenDelta != 0 || displayStateChange)
 				{
-					var currentScreen:Screen = Screen.screens[_screenIndex];
-					var bounds:Rectangle = currentScreen.bounds;
-
-					if (_displayState == StageDisplayState.NORMAL)
-					{
-						_window.stage.displayState = StageDisplayState.NORMAL;
-						_window.width = currentScreen.bounds.width / 2;
-						_window.height = currentScreen.bounds.height / 2;
-						_window.move(currentScreen.bounds.x + currentScreen.bounds.width / 4, currentScreen.bounds.y + currentScreen.bounds.height / 4);
-					}
-					else
-					{
-						_window.move(bounds.x, bounds.y);
-	//					if (_window is WindowedApplication)
-	//						(_window as WindowedApplication).bounds = bounds;
-
-						// Fix the size. For some reason, the height and width of the Window are not getting updated to match the stage when the window is first created.
-						_window.width = _window.stage.stageWidth;
-						_window.height = _window.stage.stageHeight;
-
-						_window.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
-					}
+					moveWindow();
 				}
 			}
 		}
 
+		protected function moveWindow():void
+		{
+			var currentScreen:Screen = Screen.screens[_screenIndex];
+			var bounds:Rectangle = currentScreen.bounds;
+
+			if (_displayState == StageDisplayState.NORMAL)
+			{
+				_window.stage.displayState = StageDisplayState.NORMAL;
+				_window.width = currentScreen.bounds.width / 2;
+				_window.height = currentScreen.bounds.height / 2;
+				_window.move(currentScreen.bounds.x + currentScreen.bounds.width / 4,
+							 currentScreen.bounds.y + currentScreen.bounds.height / 4);
+			}
+			else
+			{
+				_window.move(bounds.x, bounds.y);
+				//					if (_window is WindowedApplication)
+				//						(_window as WindowedApplication).bounds = bounds;
+
+				// Fix the size. For some reason, the height and width of the Window are not getting updated to match the stage when the window is first created.
+				_window.width = currentScreen.bounds.width;
+				_window.height = currentScreen.bounds.height;
+
+				_window.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+			}
+		}
+
+		public function fillBiggestScreen():void
+		{
+			var biggestScreenPixels:Number;
+			var biggestScreen:Screen;
+			var biggestScreenIndex:int;
+
+			var screenIndex:int = 0;
+
+			for each (var screen:Screen in Screen.screens)
+			{
+				var screenPixels:Number = screen.bounds.width * screen.bounds.height;
+				if (isNaN(biggestScreenPixels) || screenPixels > biggestScreenPixels)
+				{
+					biggestScreenPixels = screenPixels;
+					biggestScreen = screen;
+					biggestScreenIndex = screenIndex;
+				}
+				screenIndex++;
+			}
+
+			_displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+			_screenIndex = biggestScreenIndex;
+			moveWindow();
+		}
 	}
 }

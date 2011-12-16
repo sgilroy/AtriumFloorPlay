@@ -59,11 +59,15 @@ package atriumFloorPlay
 					if (!isNaN(_oldWidth) && !isNaN(_oldWidth))
 						moveDynamicBodiesAfterResize(this.width / _oldWidth, this.height / _oldHeight);
 					createBorderBoxes();
-
-					_oldWidth = this.width;
-					_oldHeight = this.height;
+					initializeOldWidthHeight();
 				}
 			}
+		}
+
+		protected function initializeOldWidthHeight():void
+		{
+			_oldWidth = this.width;
+			_oldHeight = this.height;
 		}
 
 		private function removeBorderBoxes():void
@@ -93,6 +97,7 @@ package atriumFloorPlay
 
 		protected function creationCompleteHandler(event:FlexEvent):void
 		{
+			initializeOldWidthHeight();
 			initializeDynamicElements();
 		}
 

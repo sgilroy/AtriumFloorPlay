@@ -7,6 +7,7 @@
 	   showStatusBar="false"
 	   width="800"
 	   height="600"
+	   close="closeHandler(event)"
 		>
     <fx:Script><![CDATA[
 		import mx.controls.Alert;
@@ -25,6 +26,7 @@
 
 		private var _blobVisualizer:BlobVisualizer;
 		private var _cursorTracker:CursorTracker;
+		private var _configurationWindow:ConfigurationWindow;
 
 		private function initializeBlobVisualizer():void
 		{
@@ -36,6 +38,14 @@
 			initializeWindowMover();
 //			initializeBlobVisualizer();
 			initializeCursorTracker();
+			initializeConfigurationWindow();
+		}
+
+		private function initializeConfigurationWindow():void
+		{
+			_configurationWindow = new ConfigurationWindow();
+			_configurationWindow.cursorTracker = _cursorTracker;
+			_configurationWindow.open();
 		}
 
 		private function initializeCursorTracker():void
@@ -46,6 +56,7 @@
 		private function initializeWindowMover():void
 		{
 			var windowMover:WindowMover = new WindowMover(this);
+			windowMover.fillBiggestScreen();
 		}
 
 		private var _physicsPlayground:PhysicsPlayground = new PhysicsPlayground();
@@ -56,6 +67,11 @@
 			_physicsPlayground.percentWidth = 100;
 			_physicsPlayground.percentHeight = 100;
 			this.addElement(_physicsPlayground);
+		}
+
+		private function closeHandler(event:Event):void
+		{
+			NativeApplication.nativeApplication.exit();
 		}
 		]]></fx:Script>
 </s:WindowedApplication>

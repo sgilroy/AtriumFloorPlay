@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+		width="800"
+		height="480"
+		title="AtriumFloorPlay Configuration"
+		close="closeHandler(event)"
+		>
+	<s:Form width="100%" height="100%">
+		<s:FormHeading label="TUIO Configuration"/>
+		<s:FormItem label="Type">
+			<s:DropDownList id="typeDropDownList" requireSelection="true">
+				<s:dataProvider>
+					<s:ArrayList>
+						<fx:String>UDP</fx:String>
+						<fx:String>TCP</fx:String>
+						<fx:String>Flash</fx:String>
+					</s:ArrayList>
+				</s:dataProvider>
+			</s:DropDownList>
+		</s:FormItem>
+		<s:FormItem label="Address">
+			<s:TextInput id="addressTextInput" text="127.0.0.1"/>
+		</s:FormItem>
+		<s:FormItem label="Port">
+			<s:TextInput id="portTextInput" text="3333"/>
+		</s:FormItem>
+		<s:FormItem label="Initialize TUIO Client">
+			<s:Button id="initializeButton" label="Initialize" click="initializeButton_clickHandler(event)"/>
+		</s:FormItem>
+		<s:TextArea id="consoleTextArea" width="100%" height="100%" />
+	</s:Form>
+
+	<fx:Script><![CDATA[
+		import mx.collections.ArrayCollection;
+		import mx.logging.LogEvent;
+
+		private var _cursorTracker:CursorTracker;
+		private var _eventStack:Array = new Array();
+
+		public function get cursorTracker():CursorTracker
+		{
+			return _cursorTracker;
+		}
+
+		public function set cursorTracker(value:CursorTracker):void
+		{
+			_cursorTracker = value;
+			_cursorTracker.addEventListener(LogEvent.LOG, cursorTracker_logHandler)
+		}
+
+		private function initializeButton_clickHandler(event:MouseEvent):void
+		{
+			try
+			{
+				_cursorTracker.initializeTuioClient(typeDropDownList.selectedItem, addressTextInput.text,
+													parseInt(portTextInput.text));
+			}
+			catch(e:Error)
+			{
+//				log("<s:span fontWeight='bold'>" + e.message + "</s:span>");
+				log(e.message);
+			}
+		}
+
+		private function cursorTracker_logHandler(event:LogEvent):void
+		{
+//			if (event.message.search("add") == 0)
+				logAddEvent(event.message);
+//			else
+//				log(event.message);
+		}
+
+		private function logAddEvent(message:String):void
+		{
+			_eventStack.push(message);
+			if (_eventStack.length > 10)
+				_eventStack.shift();
+
+			consoleTextArea.text = _eventStack.join("\n");
+		}
+
+		public function log(message:String):void
+		{
+			consoleTextArea.appendText(message + "\n");
+		}
+
+		private function closeHandler(event:Event):void
+		{
+			NativeApplication.nativeApplication.exit();
+		}
+		]]></fx:Script>
+</s:Window>
